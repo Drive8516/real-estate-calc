@@ -18,13 +18,16 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Build EXE via NW.js
+    - name: Package with Electron
       run: |
-        npm install -g nwjs-builder-bin
-        nwbuild --platforms win64 --outDir dist .
+        npx create-electron-app my-app --template=vanilla
+        Remove-Item -Recurse -Force my-app/src/*
+        Copy-Item index.html my-app/src/index.html
+        cd my-app
+        npm run make
 
-    - name: Upload EXE
+    - name: Upload EXE Artifact
       uses: actions/upload-artifact@v4
       with:
         name: RealEstateCalc-Windows-EXE
-        path: dist/
+        path: my-app/out/make/
