@@ -13,21 +13,20 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-
-    - name: Package with Electron
+    - name: Download NW.js Runtime
       run: |
-        npx create-electron-app my-app --template=vanilla
-        Remove-Item -Recurse -Force my-app/src/*
-        Copy-Item index.html my-app/src/index.html
-        cd my-app
-        npm run make
+        Invoke-WebRequest -Uri "https://dl.nwjs.io/v0.83.0/nwjs-v0.83.0-win-x64.zip" -OutFile "nwjs.zip"
+        Expand-Archive -Path "nwjs.zip" -DestinationPath "."
+        Rename-Item -Path "nwjs-v0.83.0-win-x64" -NewName "app_build"
+
+    - name: Bundle HTML and Package
+      run: |
+        Compress-Archive -Path "index.html", "package.json" -DestinationPath "app.nw"
+        cmd /c "copy /b app_build\nw.exe+app.nw app_build\不動產坪數與公設試算器.exe"
+        Remove-Item "app_build\nw.exe"
 
     - name: Upload EXE Artifact
       uses: actions/upload-artifact@v4
       with:
         name: RealEstateCalc-Windows-EXE
-        path: my-app/out/make/
+        path: app_build/
