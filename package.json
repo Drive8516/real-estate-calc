@@ -1,0 +1,9 @@
+{
+  "name": "real-estate-calc",
+  "main": "index.html",
+  "window": {
+    "title": "不動產坪數與公設雙向換算工具 v1.4.1",
+    "width": 450,
+    "height": 800
+  }
+}
